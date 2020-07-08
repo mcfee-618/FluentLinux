@@ -85,3 +85,18 @@ void lock(lock_t *lock) {
 ![avatar](static/6.png)
 
 guard起到了自旋的作用，但是很快就不会自旋了，获取锁失败会将相关的线程加入到一个队列中。
+
+由于之前的代码是先guard=0再park,如果在park调用之前切换到另一个线程，可能导致这个线程永远睡下去，
+因此下面做了改进，setpark一个线程表明自己要park，如果另一个线程被调度调用了unpark，那么
+后续的park调用就会直接返回而不是睡眠。
+ ```
+queue_add(m->q, gettid());
+setpark(); // new code
+m->guard = 0;
+ ```
+ 
+ 
+
+## 两阶段锁
+
+第一个阶段先自旋一段时间，第二个阶段会睡眠直到锁可用，这是一个hybrid方案。
