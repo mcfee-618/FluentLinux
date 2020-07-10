@@ -100,3 +100,10 @@ m->guard = 0;
 ## 两阶段锁
 
 第一个阶段先自旋一段时间，第二个阶段会睡眠直到锁可用，这是一个hybrid方案。
+
+
+## python锁实现
+锁的底层是c语言的信号量，利用信号量可以实现锁和条件变量，sem_init(sem_t *sem, int pshared, unsigned int value)
+信号量的值是1并且不是进程共享的，放置在这个进程的所有线程都可见的地址上。
+
+https://www.jianshu.com/p/e84b2d201b40
